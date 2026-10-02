@@ -6,3 +6,5 @@ scripts*/
 
 # Ignore backup files
 *~
+
+/build/
