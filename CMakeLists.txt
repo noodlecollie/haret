@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
+set(CMAKE_CONFIGURATION_TYPES Debug Release)
+
 project(haret LANGUAGES C CXX)
 
 set(VERSION "" CACHE STRING "Build version override")
@@ -27,3 +29,14 @@ if(NOT CMAKE_CROSSCOMPILING)
 
 	return()
 endif()
+
+# Important to check the build type, as the toolchain only provides
+# the correct flags for Debug and Release
+string(REGEX MATCH "^([Dd][Ee][Bb][Uu][Gg])|([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$" VALID_BUILD_TYPE "${CMAKE_BUILD_TYPE}")
+
+if("${VALID_BUILD_TYPE}" STREQUAL "")
+	message(FATAL_ERROR "Only Debug and Release are supported as build types")
+endif()
+
+set(CMAKE_COMPILE_WARNING_AS_ERROR YES)
+add_compile_options(-Wall -MD -fno-exceptions -fno-rtti)
