@@ -62,3 +62,8 @@ cmake --build . --config Release
 
 If you've installed CeGCC to somewhere other than `/opt/cegcc`, you may also need
 to pass `-DCMAKE_SYSROOT=<your path>`.
+
+## Quirks
+
+As HaRET is a very carefully constructed utility, it requires very specific compiler settings.
+The required settings, and documentation of the behaviour, are described in [quirks.md](quirks.md).

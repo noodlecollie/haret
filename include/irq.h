@@ -12,6 +12,16 @@
 // section must not reference data or code in any other sections.
 #define __irq __attribute__ ((__section__ (".text.irq")))
 
+// Helper to mark callback functions that the .text.irq section may
+// take the address of, but does not actually use. By default, we
+// don't want .text.irq to be referring to any code outside of the
+// section, but when it logs exceptions and provides a callback
+// function for the main code to use, it has to take the address
+// of that callback function. Those specific callbacks are marked
+// as being in this section, simply so that we have an easy way of
+// identifying them in objdump and excluding them from other, more
+// problematic relocations.
+#define __trace_cb __attribute__ ((__section__ (".text.trace_callbacks")))
 
 /****************************************************************
  * Shared storage between irq handlers and reporting code
@@ -221,4 +231,3 @@ void __irq stopMMUMerge(struct irqData *data);
 void __irq checkMMUMerge(struct irqData *data);
 int prepMMUMerge(struct irqData *data);
 void dumpMMUMerge(struct irqData *data);
-

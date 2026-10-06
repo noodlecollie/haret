@@ -15,7 +15,7 @@ OUT=out/
 
 # Default compiler flags (note -march=armv4 is needed for 16 bit insns)
 CXXFLAGS = -Wall -O -g -MD -march=armv4 -Iinclude -fno-exceptions -fno-rtti
-CXXFLAGS_ARMV5 = -Wall -O -g -MD -march=armv5 -Iinclude -fno-exceptions -fno-rtti
+CXXFLAGS_ARMV5 = -Wall -O -g -MD -march=armv5t -Iinclude -fno-exceptions -fno-rtti
 LDFLAGS = -Wl,--major-subsystem-version=2,--minor-subsystem-version=10
 # LDFLAGS to debug invalid imports in exe
 #LDFLAGS = -Wl,-M -Wl,--cref
@@ -79,7 +79,7 @@ $(OUT)%.lib: src/wince/%.def
 	@echo "  Building library $@"
 	$(Q)$(DLLTOOL) $(DLLTOOLFLAGS) -d $< -l $@
 
-$(OUT)%-debug:
+$(OUT)%-debug.exe:
 	$(Q)echo 'const char *VERSION = "$(VERSION)";' > $(OUT)version.cpp
 	$(call compile,$(OUT)version.cpp,$(OUT)version.o)
 	@echo "  Checking for relocations"
@@ -87,7 +87,7 @@ $(OUT)%-debug:
 	@echo "  Linking $@ (Version \"$(VERSION)\")"
 	$(Q)$(CXX) $(LDFLAGS) $(OUT)version.o $^ $(LIBS) -o $@
 
-$(OUT)%.exe: $(OUT)%-debug
+$(OUT)%.exe: $(OUT)%-debug.exe
 	@echo "  Stripping $^ to make $@"
 	$(Q)$(STRIP) $^ -o $@
 
@@ -102,7 +102,7 @@ MACHOBJS := machines.o \
 
 $(OUT)mach-autogen.o: src/mach/machlist.txt
 	@echo "  Building machine list"
-	$(Q)tools/buildmachs.py < $^ > $(OUT)mach-autogen.cpp
+	python3 tools/buildmachs.py < $^ > $(OUT)mach-autogen.cpp
 	$(call compile,$(OUT)mach-autogen.cpp,$@)
 
 COREOBJS := $(MACHOBJS) haret-res.o libcfunc.o \
@@ -115,7 +115,7 @@ HARETOBJS := $(COREOBJS) haret.o gpio.o uart.o wincmds.o \
   network.o terminal.o com_port.o tlhcmds.o memcmds.o pxacmds.o aticmds.o \
   imxcmds.o s3c-gpio.o msmcmds.o
 
-$(OUT)haret-debug: $(addprefix $(OUT),$(HARETOBJS)) src/haret.lds
+$(OUT)haret-debug.exe: $(addprefix $(OUT),$(HARETOBJS)) src/haret.lds
 
 ####### Stripped down linux bootloading program.
 LINLOADOBJS := $(COREOBJS) stubboot.o kernelfiles.o
@@ -152,4 +152,3 @@ $(OUT):
 	mkdir $@
 
 -include $(OUT)*.d
-

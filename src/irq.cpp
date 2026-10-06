@@ -9,6 +9,7 @@
 #include "pkfuncs.h" // AllocPhysMem
 #include <string.h> // memcpy
 #include <stdio.h> // _snprintf
+#include <algorithm> // std::min
 
 #include "xtypes.h"
 #include "watch.h" // memcheck
@@ -80,7 +81,7 @@ postPoll(struct irqData *data, int isPXA) {
  * C part of exception handlers
  ****************************************************************/
 
-static void
+static void __trace_cb
 report_memPoll(irqData *data, const char *header, traceitem *item)
 {
     watchListVar *w = (watchListVar*)item->d0;
@@ -170,7 +171,7 @@ prefetch_handler(struct irqData *data, struct irqregs *regs)
     return ret;
 }
 
-static void
+static void __trace_cb
 report_resume(irqData *, const char *header, traceitem *item)
 {
     Output("%s WinCE resume", header);
@@ -235,7 +236,7 @@ static void
 prepPoll(pollinfo *info, watchListVar *var, int first=1)
 {
     memcpy(info->list, var->watchlist, sizeof(info->list));
-    info->count = min(var->watchcount, ARRAY_SIZE(info->list));
+    info->count = std::min(var->watchcount, ARRAY_SIZE(info->list));
     info->cls = var;
     var->beginWatch(first);
 }

@@ -80,7 +80,7 @@ startL1traps(struct irqData *data)
     }
 }
 
-static void
+static void __trace_cb
 report_mapchanged(irqData *, const char *header, traceitem *item)
 {
     uint32 mmuaddr=item->d0, val=item->d1;
@@ -117,7 +117,7 @@ DEF_GETIRQCPR(get_FSR, p15, 0, c5, c0, 0)
 // Flush the I and D TLBs.
 DEF_SETCPRATTR(set_TLBflush, p15, 0, c8, c7, 0, __irq, "memory")
 
-static void
+static void __trace_cb
 report_giveup(irqData *, const char *header, traceitem *)
 {
     Output("%s giving up - clearing mapping", header);
@@ -139,7 +139,7 @@ giveUp(struct irqData *data)
     set_TLBflush(0);
 }
 
-static void
+static void __trace_cb
 report_memAccess(irqData *, const char *header, traceitem *item)
 {
     uint32 addr=item->d0, pc=item->d1, insn=item->d2, val=item->d3;
@@ -396,7 +396,7 @@ L1_abort_handler(struct irqData *data, struct irqregs *regs)
     return 0;
 }
 
-static void
+static void __trace_cb
 report_prefetch(irqData *, const char *header, traceitem *item)
 {
     uint32 addr=item->d0;

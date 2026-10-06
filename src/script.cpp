@@ -12,6 +12,7 @@
 #include <stdarg.h> // va_list
 #include <string.h> // strchr, memcpy, memset
 #include <stdlib.h> // free
+#include <algorithm> // std::min
 
 #include "xtypes.h"
 #include "cbitmap.h" // TEST/SET/CLEARBIT
@@ -271,7 +272,7 @@ get_expression(const char **s, uint32 *v, int priority, int flags)
   while (!unk_op)
   {
     char op = peek_char (s);
-    if ((op == '=' || op == '!') && *(*s + 1) == '=') 
+    if ((op == '=' || op == '!') && *(*s + 1) == '=')
     {
       if (priority > 1)
         return true;
@@ -919,7 +920,7 @@ cmd_joinlist(const char *cmd, const char *args)
         listVarBase *srcvar = static_cast<listVarBase*>(rawvar);
 
         uint cnt = *srcvar->count;
-        uint copycnt = min(cnt, destvar->maxavail - *destvar->count);
+        uint copycnt = std::min(cnt, destvar->maxavail - *destvar->count);
         void *p = (char *)destvar->data + destvar->datasize * (*destvar->count);
         memcpy(p, srcvar->data, destvar->datasize * copycnt);
         *destvar->count += copycnt;

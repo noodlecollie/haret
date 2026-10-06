@@ -39,4 +39,7 @@ if("${VALID_BUILD_TYPE}" STREQUAL "")
 endif()
 
 set(CMAKE_COMPILE_WARNING_AS_ERROR YES)
+
+# Exception and RTTI *must* be disabled for HaRet. Since we're going to be
+# relocating chunks of data in RAM, these complicated features would break things.
 add_compile_options(-Wall -MD -fno-exceptions -fno-rtti)

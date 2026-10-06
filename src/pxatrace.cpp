@@ -68,7 +68,7 @@ startPXAtraps(struct irqData *data)
     }
 }
 
-static void
+static void __trace_cb
 report_winceResume(irqData *, const char *header, traceitem *)
 {
     Output("%s cpu resumed", header);
@@ -85,7 +85,7 @@ PXA_irq_handler(struct irqData *data, struct irqregs *regs)
     }
 }
 
-static void
+static void __trace_cb
 report_memAccess(irqData *, const char *header, traceitem *item)
 {
     uint32 pc=item->d0, insn=item->d1, Rd=item->d2, Rn=item->d3;
@@ -115,7 +115,7 @@ PXA_abort_handler(struct irqData *data, struct irqregs *regs)
     return 1;
 }
 
-static void
+static void __trace_cb
 report_insnTrace(irqData *, const char *header, traceitem *item)
 {
     uint32 pc=item->d0, reg1=item->d1, reg2=item->d2;

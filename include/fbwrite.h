@@ -26,7 +26,10 @@ struct fbinfo {
 };
 
 void fb_putc(fbinfo *fbi, char c);
-void fb_printf(fbinfo *fbi, const char *fmt, ...)
+// The switch statement in this function causes GCC to create a jump table containing
+// absolute memory addresses, which is not allowed for functions in .text.preload.
+// See quirks.md for an explanation.
+void fb_printf(fbinfo *fbi, const char *fmt, ...) __attribute__((optimize ("no-jump-tables")))
     __attribute__ ((format (printf, 2, 3)));
 void fb_clear(fbinfo *fbi);
 void fb_init(fbinfo *fbi);
@@ -34,4 +37,3 @@ void fb_init(fbinfo *fbi);
 extern const unsigned char fontdata_mini_4x6[FONTDATAMAX];
 
 #endif // _FBWRITE_H
-

@@ -24,6 +24,9 @@ SECTIONS
     . = ((. + mmu_trampoline_end - mmu_trampoline) > ALIGN(4096))
          ? ALIGN(4096) : .;
     *(.text.trampoline)
+
+    /* For functions referred to from, but not called by, .text.irq */
+    *(.text.trace_callbacks)
   }
   .rdata : {
     /* Create two symbols around the list of machine init functions. */
